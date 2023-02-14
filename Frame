@@ -1,0 +1,37 @@
+import javax.swing.*;
+
+
+public class Frame extends JFrame{
+    FileParser parser = new FileParser();
+    CatalogPanel catalogPanel;
+    AddBookPanel addBookPanel = new AddBookPanel();
+    DeleteBookPanel deleteBookPanel = new DeleteBookPanel();
+    HomeScreenPanel homeScreenPanel;
+    public Frame(){
+        setVisible(true);
+        setSize(612,600);
+        setResizable(false);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.catalogPanel = new CatalogPanel(this);
+        this.homeScreenPanel = new HomeScreenPanel(this);
+        this.add(catalogPanel);
+        this.add(homeScreenPanel);
+
+    }
+
+    public static void main (String[] args){
+        Frame frame = new Frame();
+
+
+
+    }
+    public void showScreen(JPanel screen){
+        homeScreenPanel.setVisible(false);
+        catalogPanel.setVisible(false);
+        screen.setVisible(true);
+    }
+
+
+}
+
+
