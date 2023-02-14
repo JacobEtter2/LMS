@@ -1,0 +1,183 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class CatalogPanel extends JPanel implements ActionListener {
+
+    static String[] colNames = {"Title","Author","Subject",
+                                "Page Count","Checked In","ISBN","Publisher",
+                                "Copyright","Damaged Status"};
+    static Object[][] data = {
+                            {"The Gulag Archipelago Volume 1: An Experiment in Literary Investigation","test","test","test","test","test","test","test","test"},
+                            {"test","test","test","test","test","test","test","test","test"},
+                            {"test","test","test","test","test","test","test","test","test"}
+                                                 };
+    private Frame frame;
+
+    JButton backButton = new JButton("Back");
+
+    JComboBox generalDropDown = new JComboBox();
+    JLabel generalDropDownLabel = new JLabel("Sort by:");
+    JRadioButton standardButton = new JRadioButton("Standard");
+    JRadioButton reverseButton = new JRadioButton("Reverse");
+    JLabel standardReverseLabel = new JLabel("Order:");
+    JPanel generalFilterBorder = new JPanel();
+    ButtonGroup group = new ButtonGroup();
+
+    JCheckBox none = new JCheckBox("None");
+    JCheckBox slightlyDamaged = new JCheckBox("Slightly damaged");
+    JCheckBox majorDamage = new JCheckBox("Major damage");
+    JCheckBox cannotBeCheckedOut = new JCheckBox("Cannot be checked out");
+    JLabel damageLabel = new JLabel("Damage");
+
+    JCheckBox checkedIn = new JCheckBox("Checked-in");
+    JCheckBox checkedOut = new JCheckBox("Checked-out");
+    JLabel checkInLabel = new JLabel("Check-in Status");
+
+    JPanel viewFiltersBorder = new JPanel();
+    JComboBox authorFilter = new JComboBox();
+    JLabel authorFilterLabel = new JLabel("Author");
+    JComboBox subjectFilter = new JComboBox();
+    JLabel subjectFilterLabel = new JLabel("Subject");
+    JPanel authorSubjectBorder = new JPanel();
+    JTable catalog = new JTable(data,colNames){
+        @Override
+        public boolean editCellAt(int row, int column, java.util.EventObject e) {
+            return false;
+        }
+
+    };
+
+    JScrollPane scrollPane = new JScrollPane(catalog,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+
+    public void actionPerformed (ActionEvent e){
+        if (e.getSource().equals(backButton)){
+        frame.showScreen(frame.homeScreenPanel);
+
+        }
+    }
+
+
+    public void addComponents(JPanel catalogPanel){
+        catalogPanel.add(backButton);
+
+        catalogPanel.add(generalDropDown);
+        catalogPanel.add(generalDropDownLabel);
+        catalogPanel.add(standardButton);
+        catalogPanel.add(reverseButton);
+        catalogPanel.add(standardReverseLabel);
+        catalogPanel.add(generalFilterBorder);
+
+        catalogPanel.add(none);
+        catalogPanel.add(slightlyDamaged);
+        catalogPanel.add(majorDamage);
+        catalogPanel.add(cannotBeCheckedOut);
+        catalogPanel.add(damageLabel);
+
+        catalogPanel.add(checkedIn);
+        catalogPanel.add(checkedOut);
+        catalogPanel.add(checkInLabel);
+        catalogPanel.add(viewFiltersBorder);
+
+        catalogPanel.add(authorFilter);
+        catalogPanel.add(authorFilterLabel);
+        catalogPanel.add(subjectFilter);
+        catalogPanel.add(subjectFilterLabel);
+        catalogPanel.add(authorSubjectBorder);
+
+
+        catalogPanel.add(scrollPane);
+
+    }
+    public void configureSortingFilters(){
+        generalDropDown.setBounds(264,24,120,24);
+        generalDropDown.addItem("Title");
+        generalDropDown.addItem("Subject");
+        generalDropDown.addItem("Page Number");
+
+        generalDropDownLabel.setBounds(212,24,60,24);
+
+        group.add(standardButton);
+        group.add(reverseButton);
+        standardButton.setBounds(264,60,120,24);
+        reverseButton.setBounds(264,84,120,24);
+        standardReverseLabel.setBounds(212,72,60,24);
+
+        generalFilterBorder.setBounds(200,12,196,108);
+        generalFilterBorder.setBorder(BorderFactory.createLineBorder(Color.black,2));
+    }
+    public void configureViewFilters(){
+        none.setBounds(424,36,60,24);
+        slightlyDamaged.setBounds(424,60,160,24);
+        majorDamage.setBounds(424,84,160,24);
+        cannotBeCheckedOut.setBounds(424,108,160,24);
+        damageLabel.setBounds(470,12,48,24);
+
+        checkInLabel.setBounds(450,144,96,24);
+        checkedIn.setBounds(424,168,96,24);
+        checkedOut.setBounds(424,192,160,24);
+
+        viewFiltersBorder.setBounds(394,12,196  ,214);
+        viewFiltersBorder.setBorder(BorderFactory.createLineBorder(Color.black,2));
+    }
+    public void configureAuthorSubjectFilters(){
+        //initial options
+        authorFilter.addItem("No Filter");
+        authorFilter.addItem("Aleksandr I. Solzhenitsyn");
+        authorFilter.addItem("Bret Easton Ellis");
+        authorFilter.addItem("Christopher Paolini");
+        authorFilter.addItem("Eric Nylund");
+        authorFilter.addItem("Frank Herbert");
+        authorFilter.addItem("George Orwell");
+        authorFilter.addItem("J.R.R Tolkien");
+        authorFilter.addItem("Kevin Kress");
+        authorFilter.addItem("Robert Langdon");
+        authorFilter.setBounds(215,142,175,24);
+        authorFilterLabel.setBounds(276,120,175,24);
+
+        subjectFilter.addItem("No Filter");
+        subjectFilter.addItem("Dystopian");
+        subjectFilter.addItem("Fantasy");
+        subjectFilter.addItem("Mystery");
+        subjectFilter.addItem("Non-Fiction");
+        subjectFilter.addItem("Science Fiction");
+        subjectFilter.addItem("Thriller & Suspense");
+        subjectFilter.setBounds(215,186,175,24);
+        subjectFilterLabel.setBounds(276,164,175,24);
+        authorSubjectBorder.setBounds(200,118,196,108);
+        authorSubjectBorder.setBorder(BorderFactory.createLineBorder(Color.black,2));
+    }
+    public void configureCatalog(){
+        catalog.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        scrollPane.setBounds(12,250,576,300);
+        for(int i = 0; i < 9; i++){
+            catalog.getColumnModel().getColumn(i).setPreferredWidth(150);
+        }
+
+
+    }
+    public void configureComponents(JPanel catalogPanel){
+        addComponents(catalogPanel);
+        configureSortingFilters();
+        configureViewFilters();
+        configureAuthorSubjectFilters();
+        configureCatalog();
+        //size, position, component specific configurations
+        backButton.setBounds(24,24,96,72);
+        backButton.addActionListener(this);
+
+
+    }
+    public JPanel getPanel(){
+        return this;
+    }
+    public CatalogPanel(Frame frame){
+        this.setVisible(false);
+        this.setBounds(0,0,600,600);
+        this.setLayout(null);
+        this.frame = frame;
+        configureComponents(this);
+    }
+}
