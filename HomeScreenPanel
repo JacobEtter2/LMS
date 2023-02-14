@@ -1,0 +1,85 @@
+import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
+import java.awt.event.*;
+
+public class HomeScreenPanel extends JPanel implements ActionListener{
+    private Frame frame;
+    JPanel topBorder = new JPanel();
+    JPanel bottomBorder = new JPanel();
+    JLabel label = new JLabel("Library Management System");
+    public JButton checkInButton = new JButton("Check in");
+    public JButton checkOutButton = new JButton("Check out");
+    public JButton catalogButton = new JButton("Catalog");
+    public JButton addButton = new JButton("Add");
+    public JButton deleteButton = new JButton("Delete");
+    @Override
+    public void actionPerformed(ActionEvent e){
+        if(e.getSource().equals(checkInButton)){
+            System.out.println("Check in");
+        }
+        else if (e.getSource().equals(checkOutButton)){
+            System.out.println("Check out");
+            System.out.println(frame.catalogPanel.getPanel());
+        }
+        else if(e.getSource().equals(catalogButton)){
+            System.out.println("Catalog");
+            frame.showScreen(frame.catalogPanel.getPanel());
+        }
+        else if(e.getSource().equals(addButton)){
+            System.out.println("Add");
+        }
+        else if(e.getSource().equals(deleteButton)){
+            System.out.println("Delete");
+        }
+    }
+    public JPanel getPanel(){
+        return this;
+    }
+    public void configureComponents(JPanel homeScreenPanel){
+        //add components
+        homeScreenPanel.add(label);
+        homeScreenPanel.add(checkInButton);
+        homeScreenPanel.add(checkOutButton);
+        homeScreenPanel.add(catalogButton);
+        homeScreenPanel.add(addButton);
+        homeScreenPanel.add(deleteButton);
+        homeScreenPanel.add(topBorder);
+        homeScreenPanel.add(bottomBorder);
+        //sizes and positions
+        topBorder.setBounds(21,237,558,174);
+        bottomBorder.setBounds(21,425, 558, 134 );
+
+        label.setBounds(24,24,552,192);
+        label.setHorizontalAlignment(0);
+        label.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 30));
+
+        checkInButton.setBounds(48,264,192,120);
+        checkOutButton.setBounds(360,264,192,120);
+        catalogButton.setBounds(48,432,120,120);
+        addButton.setBounds(240,432,120,120);
+        deleteButton.setBounds(432,432,120,120);
+
+        //borders
+        topBorder.setBorder(BorderFactory.createLineBorder(Color.black,2));
+        bottomBorder.setBorder(BorderFactory.createLineBorder(Color.black,2));
+        label.setBorder(BorderFactory.createLineBorder(Color.black,2));
+
+        //action listeners
+        checkInButton.addActionListener(this);
+        checkOutButton.addActionListener(this);
+        catalogButton.addActionListener(this);
+        addButton.addActionListener(this);
+        deleteButton.addActionListener(this);
+    }
+
+    public HomeScreenPanel(Frame frame) {
+        //configure panel
+        this.frame = frame;
+        this.setVisible(true);
+        this.setBounds(0,0,600,600);
+        this.setLayout(null);
+
+        configureComponents(this);
+    }
+}
