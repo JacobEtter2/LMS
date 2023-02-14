@@ -1,0 +1,35 @@
+import java.util.ArrayList;
+
+public class Book {
+    public static ArrayList <Book> bookList = new ArrayList<Book>();
+    String subject;
+    String title;
+    String author;
+    String publisher;
+    boolean copyright;
+    int pageCount;
+    String isbn;
+    String damagedStatus;
+    String checkedInStatus;
+    String studentName;
+    String returnDate;
+    public Book(String subject, String title,
+                String author, String publisher,
+                boolean copyright, int pageCount,
+                String isbn, String damagedStatus,
+                String checkedInStatus, String studentName,
+                String returnDate ){
+        this.subject = subject;
+        this.title = title;
+        this.author = author;
+        this.publisher = publisher;
+        this.copyright = copyright;
+        this.pageCount = pageCount;
+        this.isbn = isbn;
+        this.damagedStatus = damagedStatus;
+        this.checkedInStatus = checkedInStatus;
+        this.studentName = studentName;
+        this.returnDate = returnDate;
+    }
+
+}
