@@ -1,2 +1,84 @@
-public class CheckOutPanel {
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.*;
+
+
+public class CheckOutPanel extends JPanel implements ActionListener {
+    private Frame frame;
+
+    JButton backButton = new JButton("Back");
+    JButton checkOutButton = new JButton("Check in");
+    JLabel dropdownLabel = new JLabel("Book:");
+    JComboBox bookDropdown = new JComboBox();
+
+    public void updateDropdown(){
+        bookDropdown.removeAllItems();
+        ArrayList<Book> checkedOutBooks = new ArrayList<>();
+        for (Book book : Book.bookList){
+            if (book.checkedInStatus.equals("Checked In")) {
+                checkedOutBooks.add(book);
+            }
+            Collections.sort(checkedOutBooks, new Comparator<Book>() {
+                @Override
+                public int compare(Book o1, Book o2) {
+                    return o1.title.compareTo(o2.title);
+                }
+            });
+
+        }
+        for(Book book:checkedOutBooks){
+            bookDropdown.addItem(book.title);
+        }
+    }
+
+    public void checkOutBook(Object item){
+        for (Book book : Book.bookList){
+            if (book.title.equals(item)){
+                if(book.damagedStatus.equals("Cannot Be Checked Out")){
+                    JOptionPane.showMessageDialog(this,"This book is too damaged to be checked out :(");
+                }
+                else if(book.damagedStatus.equals("Major Damage")){
+                    JOptionPane.showConfirmDialog(this,"This book is very damaged, would you still like to check out?");
+                }
+            }
+        }
+        updateDropdown();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource().equals(backButton)){
+            frame.showScreen(frame.homeScreenPanel);
+        }
+        else if(e.getSource().equals(checkOutButton)){
+            checkOutBook(bookDropdown.getSelectedItem());
+        }
+    }
+    public void configureComponents(JPanel panel) {
+        backButton.setBounds(24,24,96,72);
+        backButton.addActionListener(this);
+
+        dropdownLabel.setBounds(96,108,36,24);
+
+        bookDropdown.setBounds(140,108,448,24);
+        checkOutButton.setBounds(240,156,108,72);
+        checkOutButton.addActionListener(this);
+
+
+
+        panel.add(backButton);
+        panel.add(dropdownLabel);
+        panel.add(bookDropdown);
+        panel.add(checkOutButton);
+    }
+    public CheckOutPanel(Frame frame){
+        this.setVisible(false);
+        this.setBounds(0,0,600,600);
+        this.setLayout(null);
+        this.frame = frame;
+        this.configureComponents(this);
+
+    }
+
+
 }
