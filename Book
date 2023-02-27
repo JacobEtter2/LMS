@@ -1,7 +1,9 @@
 import java.util.ArrayList;
 
-public class Book {
+public class Book implements Comparable<Book>{
+    //ArrayList where all books are stored
     public static ArrayList <Book> bookList = new ArrayList<Book>();
+    //Book attributes
     String subject;
     String title;
     String author;
@@ -13,12 +15,15 @@ public class Book {
     String checkedInStatus;
     String studentName;
     String returnDate;
-    public Book(String subject, String title,
-                String author, String publisher,
-                boolean copyright, int pageCount,
-                String isbn, String damagedStatus,
-                String checkedInStatus, String studentName,
-                String returnDate ){
+
+    public int compareTo(Book otherBook) {
+        return this.pageCount - otherBook.pageCount;
+    }
+
+    public Book(String subject, String title, String author, String publisher,
+                boolean copyright, int pageCount, String isbn, String damagedStatus,
+                String checkedInStatus, String studentName, String returnDate ){
+        //Set all attributes of Book object to respective key value in JSON
         this.subject = subject;
         this.title = title;
         this.author = author;
