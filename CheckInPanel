@@ -1,2 +1,81 @@
-public class CheckInPanel {
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.*;
+
+
+public class CheckInPanel extends JPanel implements ActionListener {
+    private Frame frame;
+
+    JButton backButton = new JButton("Back");
+    JButton checkInButton = new JButton("Check in");
+    JLabel dropdownLabel = new JLabel("Book:");
+    JComboBox bookDropdown = new JComboBox();
+
+    public void updateDropdown(){
+        bookDropdown.removeAllItems();
+        ArrayList<Book> checkedInBooks = new ArrayList<>();
+        for (Book book : Book.bookList){
+            if (!book.checkedInStatus.equals("Checked In")) {
+                checkedInBooks.add(book);
+            }
+            Collections.sort(checkedInBooks, new Comparator<Book>() {
+                @Override
+                public int compare(Book o1, Book o2) {
+                    return o1.title.compareTo(o2.title);
+                }
+            });
+
+        }
+        for(Book book:checkedInBooks){
+            bookDropdown.addItem(book.title);
+        }
+    }
+
+    public void checkInBook(Object item){
+        for (Book book : Book.bookList){
+            if (book.title.equals(item)){
+                book.checkedInStatus = "Checked In";
+                JOptionPane.showMessageDialog(this,book.title + " has been checked in.");
+            }
+        }
+    updateDropdown();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getSource().equals(backButton)){
+            frame.showScreen(frame.homeScreenPanel);
+        }
+        else if(e.getSource().equals(checkInButton)){
+            checkInBook(bookDropdown.getSelectedItem());
+        }
+    }
+    public void configureComponents(JPanel panel) {
+        backButton.setBounds(24,24,96,72);
+        backButton.addActionListener(this);
+
+        dropdownLabel.setBounds(96,108,36,24);
+
+        bookDropdown.setBounds(140,108,448,24);
+
+        checkInButton.setBounds(240,156,108,72);
+        checkInButton.addActionListener(this);
+
+
+
+        panel.add(backButton);
+        panel.add(dropdownLabel);
+        panel.add(bookDropdown);
+        panel.add(checkInButton);
+    }
+    public CheckInPanel(Frame frame){
+        this.setVisible(false);
+        this.setBounds(0,0,600,600);
+        this.setLayout(null);
+        this.frame = frame;
+        this.configureComponents(this);
+
+    }
+
+
 }
