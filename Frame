@@ -1,33 +1,56 @@
 import javax.swing.*;
-
+import java.awt.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Frame extends JFrame{
-    FileParser parser = new FileParser();
+    //Reads JSON file
+    FileParser parser;
+    //Sorts books
+    CatalogConfigurer catalogConfigurer;
+    //Screens
     CatalogPanel catalogPanel;
+    CheckInPanel checkInPanel;
+    CheckOutPanel checkOutPanel;
     AddBookPanel addBookPanel = new AddBookPanel();
     DeleteBookPanel deleteBookPanel = new DeleteBookPanel();
     HomeScreenPanel homeScreenPanel;
     public Frame(){
+        //Set initial JFrame properties
         setVisible(true);
         setSize(612,600);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        //Initialize objects
+        this.parser = new FileParser();
         this.catalogPanel = new CatalogPanel(this);
+        this.catalogConfigurer = new CatalogConfigurer(this);
+        this.checkInPanel = new CheckInPanel(this);
+        this.checkOutPanel = new CheckOutPanel(this);
         this.homeScreenPanel = new HomeScreenPanel(this);
+        //Add screens to JFrame
         this.add(catalogPanel);
+        this.add(checkInPanel);
+        this.add(checkOutPanel);
         this.add(homeScreenPanel);
 
     }
-
+    //Main method
     public static void main (String[] args){
         Frame frame = new Frame();
+        long millis=System.currentTimeMillis();
 
-
-
+        // creating a new object of the class Date
+        java.sql.Date date = new java.sql.Date(millis);
+        System.out.println(date);
     }
+    //Makes all screens invisible, then sets argued screen to visible
     public void showScreen(JPanel screen){
         homeScreenPanel.setVisible(false);
         catalogPanel.setVisible(false);
+        checkInPanel.setVisible(false);
+        checkOutPanel.setVisible(false);
         screen.setVisible(true);
     }
 
