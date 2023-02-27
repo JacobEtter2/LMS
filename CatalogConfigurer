@@ -1,0 +1,157 @@
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+import java.util.*;
+
+public class CatalogConfigurer extends CatalogPanel {
+    static ArrayList <Book> sortedBookList;
+    public void sortBooks(CatalogPanel catalogPanel){
+        /* The books are filtered by first creating an empty ArrayList sortedBookList.
+           Then all books with the matching author as the filter are added from Book.bookList.
+           Temp array is created and then any books with the matching subject as the filter are added to the temp array.
+           sortedBookList is then set equal to temp array.
+           Same process for check in and damage(new temp array -> add matching books from sortedBookList -> sortedBookList = tempArray)
+         */
+
+        //Empty ArrayList for storing books that match criteria
+        sortedBookList = new ArrayList<>();
+
+        //Filters out all books that don't match author filter
+        addAuthor((String)catalogPanel.authorFilter.getSelectedItem(), catalogPanel);
+
+        //Filters out all remaining books that don't match subject filter
+        filterSubjects((String)catalogPanel.subjectFilter.getSelectedItem(),catalogPanel);
+
+        //Filters out all remaining books that don't match checkIn or damage selection
+        filterCheckInAndDamage(catalogPanel);
+
+        //Reverses list if selected
+        if(catalogPanel.reverseButton.isSelected()){
+            Collections.reverse(sortedBookList);
+        }
+        //Creates new table model with the sorted list and sets catalog to the new table model
+        updateCatalog(catalogPanel);
+
+    }
+    void addAuthor (String item, CatalogPanel catalogPanel){
+        if(catalogPanel.authorFilter.getSelectedItem().equals("No Filter") == false){
+            for (Book book: Book.bookList) {
+                checkAuthor(book,item,sortedBookList);
+            }
+        }
+        else{
+            sortedBookList = Book.bookList;
+        }
+    }
+    void checkAuthor(Book book, String item, ArrayList sortedBookList){
+        if(book.author.equals(item)){
+            sortedBookList.add(book);
+        }
+    }
+
+    void filterSubjects(String item, CatalogPanel catalogPanel) {
+        if (catalogPanel.subjectFilter.getSelectedItem().equals("No Filter") == false) {
+
+            ArrayList<Book> tempSortedBookList = new ArrayList<>();
+            for (Book book : sortedBookList){
+                if (book.subject.equals(catalogPanel.subjectFilter.getSelectedItem())){
+                    tempSortedBookList.add(book);
+                }
+            }
+            sortedBookList = tempSortedBookList;
+
+        }
+    }
+    boolean bookMatchesDamage(Book book, CatalogPanel catalogPanel){
+        if(book.damagedStatus.equals("None") && catalogPanel.none.isSelected()){
+            return true;
+        }
+        else if(book.damagedStatus.equals("Slightly Damaged") && catalogPanel.slightlyDamaged.isSelected()){
+            return true;
+        }
+        else if(book.damagedStatus.equals("Major Damage") && catalogPanel.majorDamage.isSelected()){
+            return true;
+        }
+        else if(book.damagedStatus.equals("Cannot be checked out") && catalogPanel.cannotBeCheckedOut.isSelected()){
+            return true;
+        }
+
+        return false;
+    }
+    boolean bookMatchesCheckIn(Book book, CatalogPanel catalogPanel) {
+        if (book.checkedInStatus.equals("Checked In") && catalogPanel.checkedIn.isSelected()) {
+            return true;
+        }
+        else if ((book.checkedInStatus.equals("Checked Out") || (book.checkedInStatus.equals("Passed Due"))) && catalogPanel.checkedOut.isSelected()) {
+            return true;
+        }
+        return false;
+    }
+    void filterCheckInAndDamage(CatalogPanel catalogPanel){
+        ArrayList <Book> tempSortedList = new ArrayList<>();
+        for (Book book : sortedBookList) {
+            if((bookMatchesCheckIn(book, catalogPanel) && bookMatchesDamage(book, catalogPanel))){
+                tempSortedList.add(book);
+            }
+        }
+        sortedBookList = tempSortedList;
+
+            Collections.sort(sortedBookList, new Comparator<Book>() {
+                @Override
+                public int compare(Book book1, Book book2) {
+                    switch ((String) catalogPanel.generalDropDown.getSelectedItem()) {
+                        case ("Title"):
+                            return book1.title.compareTo(book2.title);
+
+                        case ("Author"):
+                            return book1.author.compareTo(book2.author);
+
+                        case ("Page Count"):
+                            return Integer.compare(book1.pageCount, book2.pageCount);
+                    }
+
+                    return 0;
+
+                }
+            });
+    }
+    void updateCatalog(CatalogPanel catalogPanel) {
+
+        DefaultTableModel model = new DefaultTableModel();
+
+        // Create column headers for the model
+        model.addColumn("Title");
+        model.addColumn("Author");
+        model.addColumn("Subject");
+        model.addColumn("Page Count");
+        model.addColumn("Checked In Status");
+        model.addColumn("ISBN");
+        model.addColumn("Publisher");
+        model.addColumn("Copyright");
+        model.addColumn("Damaged Status");
+
+        // Add data from sortedBookList to model
+        for (Book book : sortedBookList) {
+            Object[] row = new Object[]{book.title, book.author, book.subject, book.pageCount, book.checkedInStatus, book.isbn, book.publisher, book.copyright, book.damagedStatus};
+            model.addRow(row);
+        }
+
+
+        // Set the model to the JTable
+        catalogPanel.catalog.setModel(model);
+
+        // Set the width of the columns to 175
+        for (int i = 0; i < catalogPanel.catalog.getColumnCount(); i++) {
+            catalogPanel.catalog.getColumnModel().getColumn(i).setPreferredWidth(175);
+        }
+
+        // Repaint the JTable to show the updated data
+        catalogPanel.catalog.repaint();
+    }
+
+    public CatalogConfigurer(Frame frame) {
+        super(frame);
+    }
+
+}
