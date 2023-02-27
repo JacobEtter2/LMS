@@ -4,7 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class HomeScreenPanel extends JPanel implements ActionListener{
+    //instance of JFrame to easily access other components
     private Frame frame;
+    //Components
     JPanel topBorder = new JPanel();
     JPanel bottomBorder = new JPanel();
     JLabel label = new JLabel("Library Management System");
@@ -13,18 +15,20 @@ public class HomeScreenPanel extends JPanel implements ActionListener{
     public JButton catalogButton = new JButton("Catalog");
     public JButton addButton = new JButton("Add");
     public JButton deleteButton = new JButton("Delete");
+
+    //Changes screen to button that was clicked
     @Override
     public void actionPerformed(ActionEvent e){
         if(e.getSource().equals(checkInButton)){
-            System.out.println("Check in");
+            frame.showScreen(frame.checkInPanel);
+            frame.checkInPanel.updateDropdown();
         }
         else if (e.getSource().equals(checkOutButton)){
             System.out.println("Check out");
-            System.out.println(frame.catalogPanel.getPanel());
         }
         else if(e.getSource().equals(catalogButton)){
-            System.out.println("Catalog");
             frame.showScreen(frame.catalogPanel.getPanel());
+            frame.catalogConfigurer.sortBooks(frame.catalogPanel);
         }
         else if(e.getSource().equals(addButton)){
             System.out.println("Add");
@@ -33,9 +37,7 @@ public class HomeScreenPanel extends JPanel implements ActionListener{
             System.out.println("Delete");
         }
     }
-    public JPanel getPanel(){
-        return this;
-    }
+
     public void configureComponents(JPanel homeScreenPanel){
         //add components
         homeScreenPanel.add(label);
