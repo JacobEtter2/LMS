@@ -4,18 +4,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CatalogPanel extends JPanel implements ActionListener {
-
-    static String[] colNames = {"Title","Author","Subject",
+    //Used for initialization of JTable catalog
+    static String[] colNames= {"Title","Author","Subject",
                                 "Page Count","Checked In","ISBN","Publisher",
                                 "Copyright","Damaged Status"};
-    static Object[][] data = {
-                            {"The Gulag Archipelago Volume 1: An Experiment in Literary Investigation","test","test","test","test","test","test","test","test"},
-                            {"test","test","test","test","test","test","test","test","test"},
-                            {"test","test","test","test","test","test","test","test","test"}
-                                                 };
+    static Object[][] data = new Object[8][9];
+    //Instance of JFrame for easy access to other components
     private Frame frame;
-
+    //Components
     JButton backButton = new JButton("Back");
+    JButton applyButton = new JButton("Apply");
 
     JComboBox generalDropDown = new JComboBox();
     JLabel generalDropDownLabel = new JLabel("Sort by:");
@@ -41,20 +39,27 @@ public class CatalogPanel extends JPanel implements ActionListener {
     JComboBox subjectFilter = new JComboBox();
     JLabel subjectFilterLabel = new JLabel("Subject");
     JPanel authorSubjectBorder = new JPanel();
-    JTable catalog = new JTable(data,colNames){
+    JTable catalog = new JTable(FileParser.numOfBooks,9){
+        //User can drag and drop columns but cannot edit the cells
         @Override
         public boolean editCellAt(int row, int column, java.util.EventObject e) {
             return false;
         }
 
     };
+    CatalogCellRenderer renderer = new CatalogCellRenderer();
+
 
     JScrollPane scrollPane = new JScrollPane(catalog,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-
+    //Shows homeScreenPanel if back button is clicked
+    //Sorts and repaints catalog if apply button is clicked
     public void actionPerformed (ActionEvent e){
         if (e.getSource().equals(backButton)){
-        frame.showScreen(frame.homeScreenPanel);
+            frame.showScreen(frame.homeScreenPanel);
+        }
+        else if(e.getSource().equals(applyButton)){
+            frame.catalogConfigurer.sortBooks(frame.catalogPanel);
 
         }
     }
@@ -62,6 +67,7 @@ public class CatalogPanel extends JPanel implements ActionListener {
 
     public void addComponents(JPanel catalogPanel){
         catalogPanel.add(backButton);
+        catalogPanel.add(applyButton);
 
         catalogPanel.add(generalDropDown);
         catalogPanel.add(generalDropDownLabel);
@@ -94,12 +100,13 @@ public class CatalogPanel extends JPanel implements ActionListener {
     public void configureSortingFilters(){
         generalDropDown.setBounds(264,24,120,24);
         generalDropDown.addItem("Title");
-        generalDropDown.addItem("Subject");
-        generalDropDown.addItem("Page Number");
+        generalDropDown.addItem("Author");
+        generalDropDown.addItem("Page Count");
 
         generalDropDownLabel.setBounds(212,24,60,24);
 
         group.add(standardButton);
+        standardButton.setSelected(true);
         group.add(reverseButton);
         standardButton.setBounds(264,60,120,24);
         reverseButton.setBounds(264,84,120,24);
@@ -110,14 +117,20 @@ public class CatalogPanel extends JPanel implements ActionListener {
     }
     public void configureViewFilters(){
         none.setBounds(424,36,60,24);
+        none.setSelected(true);
         slightlyDamaged.setBounds(424,60,160,24);
+        slightlyDamaged.setSelected(true);
         majorDamage.setBounds(424,84,160,24);
+        majorDamage.setSelected((true));
         cannotBeCheckedOut.setBounds(424,108,160,24);
+        cannotBeCheckedOut.setSelected(true);
         damageLabel.setBounds(470,12,48,24);
 
         checkInLabel.setBounds(450,144,96,24);
         checkedIn.setBounds(424,168,96,24);
+        checkedIn.setSelected(true);
         checkedOut.setBounds(424,192,160,24);
+        checkedOut.setSelected(true);
 
         viewFiltersBorder.setBounds(394,12,196  ,214);
         viewFiltersBorder.setBorder(BorderFactory.createLineBorder(Color.black,2));
@@ -153,13 +166,16 @@ public class CatalogPanel extends JPanel implements ActionListener {
         catalog.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         scrollPane.setBounds(12,250,576,300);
         for(int i = 0; i < 9; i++){
-            catalog.getColumnModel().getColumn(i).setPreferredWidth(150);
+            catalog.getColumnModel().getColumn(i).setPreferredWidth(175);
         }
+        catalog.setDefaultRenderer(Object.class, new CatalogCellRenderer());
 
 
     }
     public void configureComponents(JPanel catalogPanel){
+        //Puts all components on panel
         addComponents(catalogPanel);
+        //Sets position, size, listeners, etc for all components
         configureSortingFilters();
         configureViewFilters();
         configureAuthorSubjectFilters();
@@ -167,6 +183,8 @@ public class CatalogPanel extends JPanel implements ActionListener {
         //size, position, component specific configurations
         backButton.setBounds(24,24,96,72);
         backButton.addActionListener(this);
+        applyButton.setBounds(24,144,96,72);
+        applyButton.addActionListener(this);
 
 
     }
