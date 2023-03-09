@@ -2,13 +2,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class CatalogPanel extends JPanel implements ActionListener {
     //Used for initialization of JTable catalog
-    static String[] colNames= {"Title","Author","Subject",
-                                "Page Count","Checked In","ISBN","Publisher",
-                                "Copyright","Damaged Status"};
-    static Object[][] data = new Object[8][9];
+//    static String[] colNames= {"Title","Author","Subject",
+//                                "Page Count","Checked In","ISBN","Publisher",
+//                                "Copyright","Damaged Status"};
+//    static Object[][] data = new Object[8][9];\
+
+
     //Instance of JFrame for easy access to other components
     private Frame frame;
     //Components
@@ -137,26 +141,23 @@ public class CatalogPanel extends JPanel implements ActionListener {
     }
     public void configureAuthorSubjectFilters(){
         //initial options
+        authorFilter.removeAllItems();
+        Collections.sort(Book.authorList);
         authorFilter.addItem("No Filter");
-        authorFilter.addItem("Aleksandr I. Solzhenitsyn");
-        authorFilter.addItem("Bret Easton Ellis");
-        authorFilter.addItem("Christopher Paolini");
-        authorFilter.addItem("Eric Nylund");
-        authorFilter.addItem("Frank Herbert");
-        authorFilter.addItem("George Orwell");
-        authorFilter.addItem("J.R.R Tolkien");
-        authorFilter.addItem("Kevin Kress");
-        authorFilter.addItem("Robert Langdon");
+        for ( String  author: Book.authorList){
+            authorFilter.addItem(author);
+
+        }
         authorFilter.setBounds(215,142,175,24);
         authorFilterLabel.setBounds(276,120,175,24);
-
+        authorFilter.repaint();
+        subjectFilter.removeAllItems();
+        Collections.sort(Book.subjectList);
         subjectFilter.addItem("No Filter");
-        subjectFilter.addItem("Dystopian");
-        subjectFilter.addItem("Fantasy");
-        subjectFilter.addItem("Mystery");
-        subjectFilter.addItem("Non-Fiction");
-        subjectFilter.addItem("Science Fiction");
-        subjectFilter.addItem("Thriller & Suspense");
+        for (String subject : Book.subjectList){
+            subjectFilter.addItem(subject);
+        }
+
         subjectFilter.setBounds(215,186,175,24);
         subjectFilterLabel.setBounds(276,164,175,24);
         authorSubjectBorder.setBounds(200,118,196,108);
