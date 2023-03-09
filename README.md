@@ -1,5 +1,5 @@
 # LMS
-1. When using this program, the filepath must be changed in two places. Line 52 of FileParser.java and line 11 of FileWriter.java
+1. When using this program, the filepath must be changed in two places. Line 52 of FileParser.java and line 11 of FileUpdater.java
 2. When a user is adding a book, some fields such as studentName, returnDate, and checkInStatus are automatically generated as they are only changed when checking in or out, not adding a book.
 # Fastest way to check for all requirements
 1. Run program
