@@ -1,8 +1,13 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
 
 public class Book implements Comparable<Book>{
     //ArrayList where all books are stored
     public static ArrayList <Book> bookList = new ArrayList<Book>();
+    public static ArrayList<String> authorList = new ArrayList <>();
+    public static ArrayList<String> subjectList = new ArrayList<>();
     //Book attributes
     String subject;
     String title;
@@ -20,6 +25,48 @@ public class Book implements Comparable<Book>{
         return this.pageCount - otherBook.pageCount;
     }
 
+    public void checkDate() {
+        // Parse the return date string using the format "MM/dd/yyyy"
+        LocalDate returnDateObj = LocalDate.parse(returnDate, DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+
+        // Calculate the difference between the return date and today's date
+        LocalDate today = LocalDate.now();
+        long daysDifference = today.toEpochDay() - returnDateObj.toEpochDay();
+
+        // If the return date is more than 14 days ago, set the checkedInStatus to "Passed Due"
+        if (daysDifference > 14) {
+            checkedInStatus = "Passed Due";
+        }
+    }
+
+    /* When the library is initially populated, so are the lists used by the subject and author filters
+      in checkOutPanel. This prevents any duplicates since some books have the same author/subject */
+    void checkDuplicates(String type, Book book){
+        if (type == "author"){
+            boolean isDuplicate = false;
+            for (String author : Book.authorList){
+
+                if(book.author.equals(author)){
+                    isDuplicate = true;
+                }
+            }
+            if(isDuplicate == false){
+                Book.authorList.add(book.author);
+            }
+        }
+        if(type == "subject"){
+            boolean isDuplicate = false;
+            for (String subject : Book.subjectList){
+                if(book.subject.equals(subject)){
+                    isDuplicate = true;
+                }
+            }
+            if(isDuplicate == false){
+                Book.subjectList.add(book.subject);
+            }
+        }
+    }
+
     public Book(String subject, String title, String author, String publisher,
                 boolean copyright, int pageCount, String isbn, String damagedStatus,
                 String checkedInStatus, String studentName, String returnDate ){
@@ -35,6 +82,9 @@ public class Book implements Comparable<Book>{
         this.checkedInStatus = checkedInStatus;
         this.studentName = studentName;
         this.returnDate = returnDate;
+        checkDuplicates("author",this);
+        checkDuplicates("subject",this);
+
     }
 
 }
