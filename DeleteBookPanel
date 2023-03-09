@@ -1,4 +1,94 @@
-import javax.swing.*;
+/* This class is the screen where a user would delete a bookk from the library. It simply allows them
+   to choose the book they would like and delete it.
+ */
 
-public class DeleteBookPanel extends JPanel {
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+
+
+public class DeleteBookPanel extends JPanel implements ActionListener {
+    private Frame frame;
+    private JButton backButton;
+    private JLabel dropDownLabel;
+    private JButton deleteButton;
+    private JComboBox dropDown;
+
+    public void actionPerformed(ActionEvent e){
+        if(e.getSource().equals(backButton)){
+            frame.showScreen(frame.homeScreenPanel);
+        }
+        else if (e.getSource().equals(deleteButton)){
+            deleteBook();
+
+        }
+    }
+    //Finds book that matches selection.
+    //Removes said book.
+    //Updates the book dropdown and JSON
+   private void deleteBook (){
+        Book bookToRemove = null;
+        for (Book book : Book.bookList){
+            if(book.title.equals(dropDown.getSelectedItem())){
+                bookToRemove = book;
+            }
+        }
+       int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this book?", "Confirmation", JOptionPane.YES_NO_OPTION);
+
+       if (option == JOptionPane.YES_OPTION) {
+           Book.bookList.remove(bookToRemove);
+           JOptionPane.showMessageDialog(this,bookToRemove.title + " has been deleted.");
+           updateDropDown();
+           FileUpdater.updateFile();
+       }
+
+
+
+    }
+
+    public void configureComponents(JPanel panel){
+        backButton.setBounds(24,24,96,72);
+        backButton.addActionListener(this);
+
+        dropDownLabel.setBounds(96,108,36,24);
+        dropDown.setBounds(140,108,448,24);
+
+        deleteButton.setBounds(240,200,108,72);
+        deleteButton.addActionListener(this);
+
+
+        panel.add(backButton);
+        panel.add(dropDown);
+        panel.add(dropDownLabel);
+        panel.add(deleteButton);
+    }
+
+    //Clears all item in the dropdown
+    //Adds all book titles from Book.bookList to a title list
+    //Sorts the title list then adds each title to the dropdown
+    void updateDropDown(){
+        dropDown.removeAllItems();
+        ArrayList<String> titleList = new ArrayList<>();
+        for (Book book : Book.bookList){
+            titleList.add(book.title);
+        }
+        Collections.sort(titleList);
+        for (String title : titleList){
+            dropDown.addItem(title);
+        }
+    }
+
+    public DeleteBookPanel(Frame frame){
+        this.setVisible(false);
+        this.setBounds(0,0,600,600);
+        this.setLayout(null);
+        this.frame = frame;
+        backButton = new JButton("Back");
+        deleteButton = new JButton("Delete");
+        dropDownLabel = new JLabel("Book:");
+        dropDown = new JComboBox();
+        this.configureComponents(this);
+    }
 }
