@@ -1,18 +1,20 @@
-import javax.swing.*;
+/*This class is a child class of Catalog Panel. It is specifically used to sort all the books
+ that are in the library. It is used by calling the sortBooks() method. The actual sorting process is explained
+ within sortBooks()
+ */
+
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import java.util.*;
 
 public class CatalogConfigurer extends CatalogPanel {
     static ArrayList <Book> sortedBookList;
     public void sortBooks(CatalogPanel catalogPanel){
-        /* The books are filtered by first creating an empty ArrayList sortedBookList.
-           Then all books with the matching author as the filter are added from Book.bookList.
-           Temp array is created and then any books with the matching subject as the filter are added to the temp array.
-           sortedBookList is then set equal to temp array.
-           Same process for check in and damage(new temp array -> add matching books from sortedBookList -> sortedBookList = tempArray)
-         */
+        //The books are filtered by first creating an empty ArrayList sortedBookList.
+        //Then all books with the matching author as the filter are added from Book.bookList.
+        //Temp array is created and then any books with the matching subject as the filter are added to the temp array.
+        //sortedBookList is then set equal to temp array.
+        //Same process for check in and damage(new temp array -> add matching books from sortedBookList -> sortedBookList = tempArray)
+
 
         //Empty ArrayList for storing books that match criteria
         sortedBookList = new ArrayList<>();
@@ -21,7 +23,7 @@ public class CatalogConfigurer extends CatalogPanel {
         addAuthor((String)catalogPanel.authorFilter.getSelectedItem(), catalogPanel);
 
         //Filters out all remaining books that don't match subject filter
-        filterSubjects((String)catalogPanel.subjectFilter.getSelectedItem(),catalogPanel);
+        filterSubjects(catalogPanel);
 
         //Filters out all remaining books that don't match checkIn or damage selection
         filterCheckInAndDamage(catalogPanel);
@@ -34,25 +36,27 @@ public class CatalogConfigurer extends CatalogPanel {
         updateCatalog(catalogPanel);
 
     }
-    void addAuthor (String item, CatalogPanel catalogPanel){
-        if(catalogPanel.authorFilter.getSelectedItem().equals("No Filter") == false){
+    //Checks each book in bookList, if No Filter is not selected, further checks are completed in checkAuthor()
+    private void addAuthor (String selectedAuthor, CatalogPanel catalogPanel){
+        if (catalogPanel.authorFilter.getSelectedItem().equals("No Filter") == false){
             for (Book book: Book.bookList) {
-                checkAuthor(book,item,sortedBookList);
+                checkAuthor(book,selectedAuthor,sortedBookList);
             }
         }
-        else{
+        else {
             sortedBookList = Book.bookList;
         }
     }
-    void checkAuthor(Book book, String item, ArrayList sortedBookList){
-        if(book.author.equals(item)){
+    //Adds book to sortedBookList if it matches selection
+    private void checkAuthor(Book book, String selectedAuthor, ArrayList sortedBookList){
+        if(book.author.equals(selectedAuthor)){
             sortedBookList.add(book);
         }
     }
-
-    void filterSubjects(String item, CatalogPanel catalogPanel) {
-        if (catalogPanel.subjectFilter.getSelectedItem().equals("No Filter") == false) {
-
+    //If No Filter is not selected, any item in sortedBookList is added to tempSortedBookList.
+    //Then, sortedBookList is set to tempSortedBookList.
+    private void filterSubjects( CatalogPanel catalogPanel) {
+        if (catalogPanel.subjectFilter.getSelectedItem().equals("No Filter") == false){
             ArrayList<Book> tempSortedBookList = new ArrayList<>();
             for (Book book : sortedBookList){
                 if (book.subject.equals(catalogPanel.subjectFilter.getSelectedItem())){
@@ -60,10 +64,10 @@ public class CatalogConfigurer extends CatalogPanel {
                 }
             }
             sortedBookList = tempSortedBookList;
-
         }
     }
-    boolean bookMatchesDamage(Book book, CatalogPanel catalogPanel){
+    //Checks if book's damage matches selected option
+    private boolean bookMatchesDamage(Book book, CatalogPanel catalogPanel){
         if(book.damagedStatus.equals("None") && catalogPanel.none.isSelected()){
             return true;
         }
@@ -79,7 +83,9 @@ public class CatalogConfigurer extends CatalogPanel {
 
         return false;
     }
-    boolean bookMatchesCheckIn(Book book, CatalogPanel catalogPanel) {
+
+    //Checks if book's checkinStatus matches selected option
+    private boolean bookMatchesCheckIn(Book book, CatalogPanel catalogPanel) {
         if (book.checkedInStatus.equals("Checked In") && catalogPanel.checkedIn.isSelected()) {
             return true;
         }
@@ -88,7 +94,10 @@ public class CatalogConfigurer extends CatalogPanel {
         }
         return false;
     }
-    void filterCheckInAndDamage(CatalogPanel catalogPanel){
+
+    //Adds book to tempSortedBookList if it's checkInStatus and damageStatus match the selected options.
+    //sortedBookList is then to tempSortedBookList
+    private void filterCheckInAndDamage(CatalogPanel catalogPanel){
         ArrayList <Book> tempSortedList = new ArrayList<>();
         for (Book book : sortedBookList) {
             if((bookMatchesCheckIn(book, catalogPanel) && bookMatchesDamage(book, catalogPanel))){
@@ -96,7 +105,7 @@ public class CatalogConfigurer extends CatalogPanel {
             }
         }
         sortedBookList = tempSortedList;
-
+            //Overridden sort method so the books could be sorted by their Title, Author, or Page Count field
             Collections.sort(sortedBookList, new Comparator<Book>() {
                 @Override
                 public int compare(Book book1, Book book2) {
@@ -116,7 +125,7 @@ public class CatalogConfigurer extends CatalogPanel {
                 }
             });
     }
-    void updateCatalog(CatalogPanel catalogPanel) {
+    private void updateCatalog(CatalogPanel catalogPanel) {
 
         DefaultTableModel model = new DefaultTableModel();
 
@@ -133,6 +142,9 @@ public class CatalogConfigurer extends CatalogPanel {
 
         // Add data from sortedBookList to model
         for (Book book : sortedBookList) {
+            if(book.returnDate.equals("N/A") == false) {
+                book.checkDate();
+            }
             Object[] row = new Object[]{book.title, book.author, book.subject, book.pageCount, book.checkedInStatus, book.isbn, book.publisher, book.copyright, book.damagedStatus};
             model.addRow(row);
         }
@@ -140,7 +152,6 @@ public class CatalogConfigurer extends CatalogPanel {
 
         // Set the model to the JTable
         catalogPanel.catalog.setModel(model);
-
         // Set the width of the columns to 175
         for (int i = 0; i < catalogPanel.catalog.getColumnCount(); i++) {
             catalogPanel.catalog.getColumnModel().getColumn(i).setPreferredWidth(175);
