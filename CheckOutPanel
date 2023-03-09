@@ -1,16 +1,23 @@
+/* This class is the screen where a user would check out a book. It allows the to choose the
+   book they want and enter their name.
+ */
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 
 public class CheckOutPanel extends JPanel implements ActionListener {
     private Frame frame;
-
     JButton backButton = new JButton("Back");
-    JButton checkOutButton = new JButton("Check in");
+    JButton checkOutButton = new JButton("Check out");
     JLabel dropdownLabel = new JLabel("Book:");
     JComboBox bookDropdown = new JComboBox();
-
+    JLabel nameLabel = new JLabel("Your name:");
+    JTextField nameBox = new JTextField();
+    //Clears all books from comboBox, traverses Book.bookList and only adds books that are checked-in
     public void updateDropdown(){
         bookDropdown.removeAllItems();
         ArrayList<Book> checkedOutBooks = new ArrayList<>();
@@ -30,19 +37,47 @@ public class CheckOutPanel extends JPanel implements ActionListener {
             bookDropdown.addItem(book.title);
         }
     }
-
-    public void checkOutBook(Object item){
+    //Shows appropriate damage message for book that is being checked out
+    //Finalizes check out if damage allows
+    //updates book dropdown and JSON
+    private void checkOutBook(Object item){
         for (Book book : Book.bookList){
             if (book.title.equals(item)){
-                if(book.damagedStatus.equals("Cannot Be Checked Out")){
+                if(book.damagedStatus.equals("Cannot be checked out")){
                     JOptionPane.showMessageDialog(this,"This book is too damaged to be checked out :(");
                 }
                 else if(book.damagedStatus.equals("Major Damage")){
-                    JOptionPane.showConfirmDialog(this,"This book is very damaged, would you still like to check out?");
+
+                    int option = JOptionPane.showConfirmDialog(null, "This book has sustained major damage, would you still like to check out   ?", "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION);
+
+                    if (option == JOptionPane.YES_OPTION) {
+                        finalizeCheckOut(book);
+                    }
                 }
+                else{
+                    JOptionPane.showMessageDialog(this,book.title + " has been checked out.");
+                    finalizeCheckOut(book);
+                }
+
+
+
             }
         }
         updateDropdown();
+        FileUpdater.updateFile();
+    }
+
+    //Changes book.checkedInStatus
+    //Sets book.studentName
+    //Clears name input
+    //Sets book's return date to 14 days after current date
+    private void finalizeCheckOut(Book book){
+        book.checkedInStatus = "Checked Out";
+        book.studentName = nameBox.getText();
+        nameBox.setText("");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+        book.returnDate = formatter.format(LocalDate.now().plusDays(14));
+
     }
 
     @Override
@@ -51,18 +86,23 @@ public class CheckOutPanel extends JPanel implements ActionListener {
             frame.showScreen(frame.homeScreenPanel);
         }
         else if(e.getSource().equals(checkOutButton)){
-            checkOutBook(bookDropdown.getSelectedItem());
+            if(!nameBox.getText().equals("")) {
+                checkOutBook(bookDropdown.getSelectedItem());
+            }
         }
     }
-    public void configureComponents(JPanel panel) {
+    private void configureComponents(JPanel panel) {
         backButton.setBounds(24,24,96,72);
         backButton.addActionListener(this);
 
         dropdownLabel.setBounds(96,108,36,24);
-
         bookDropdown.setBounds(140,108,448,24);
-        checkOutButton.setBounds(240,156,108,72);
+
+        checkOutButton.setBounds(240,200,108,72);
         checkOutButton.addActionListener(this);
+
+        nameLabel.setBounds(62,160,100,24);
+        nameBox.setBounds(140,160,144,24);
 
 
 
@@ -70,6 +110,8 @@ public class CheckOutPanel extends JPanel implements ActionListener {
         panel.add(dropdownLabel);
         panel.add(bookDropdown);
         panel.add(checkOutButton);
+        panel.add(nameLabel);
+        panel.add(nameBox);
     }
     public CheckOutPanel(Frame frame){
         this.setVisible(false);
@@ -77,7 +119,6 @@ public class CheckOutPanel extends JPanel implements ActionListener {
         this.setLayout(null);
         this.frame = frame;
         this.configureComponents(this);
-
     }
 
 
