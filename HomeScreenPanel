@@ -24,17 +24,20 @@ public class HomeScreenPanel extends JPanel implements ActionListener{
             frame.checkInPanel.updateDropdown();
         }
         else if (e.getSource().equals(checkOutButton)){
-            System.out.println("Check out");
+            frame.showScreen(frame.checkOutPanel);
+            frame.checkOutPanel.updateDropdown();
         }
         else if(e.getSource().equals(catalogButton)){
             frame.showScreen(frame.catalogPanel.getPanel());
+            frame.catalogPanel.configureAuthorSubjectFilters();
             frame.catalogConfigurer.sortBooks(frame.catalogPanel);
         }
         else if(e.getSource().equals(addButton)){
-            System.out.println("Add");
+            frame.showScreen(frame.addBookPanel);
         }
         else if(e.getSource().equals(deleteButton)){
-            System.out.println("Delete");
+            frame.showScreen(frame.deleteBookPanel);
+            frame.deleteBookPanel.updateDropDown();
         }
     }
 
