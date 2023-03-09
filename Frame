@@ -1,60 +1,63 @@
-import javax.swing.*;
-import java.awt.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+/* This class contains the main method and initializes most of the classses from the start. It is the
+main frame of the program. It also contains the method showScreen(), which is used when the user switches from
+screen to screen.
+ */
 
-public class Frame extends JFrame{
-    //Reads JSON file
+import javax.swing.*;
+public class Frame extends JFrame {
+    // Reads JSON file
     FileParser parser;
-    //Sorts books
+    // Sorts books
     CatalogConfigurer catalogConfigurer;
-    //Screens
+    // Screens
     CatalogPanel catalogPanel;
     CheckInPanel checkInPanel;
     CheckOutPanel checkOutPanel;
-    AddBookPanel addBookPanel = new AddBookPanel();
-    DeleteBookPanel deleteBookPanel = new DeleteBookPanel();
+    AddBookPanel addBookPanel;
+    DeleteBookPanel deleteBookPanel;
     HomeScreenPanel homeScreenPanel;
-    public Frame(){
-        //Set initial JFrame properties
+
+    public Frame() {
+        // Set initial JFrame properties
         setVisible(true);
-        setSize(612,600);
+        setSize(612, 600);
         setResizable(false);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        //Initialize objects
+        // Initialize objects
         this.parser = new FileParser();
         this.catalogPanel = new CatalogPanel(this);
         this.catalogConfigurer = new CatalogConfigurer(this);
         this.checkInPanel = new CheckInPanel(this);
         this.checkOutPanel = new CheckOutPanel(this);
+        this.addBookPanel = new AddBookPanel(this);
+        this.deleteBookPanel = new DeleteBookPanel(this);
         this.homeScreenPanel = new HomeScreenPanel(this);
-        //Add screens to JFrame
+        // Add screens to JFrame
         this.add(catalogPanel);
         this.add(checkInPanel);
         this.add(checkOutPanel);
+        this.add(addBookPanel);
+        this.add(deleteBookPanel);
         this.add(homeScreenPanel);
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        JFrame frame = new Frame();
+        //Sometimes the components would not render properly, but this seems to fix it
+        frame.repaint();
 
     }
-    //Main method
-    public static void main (String[] args){
-        Frame frame = new Frame();
-        long millis=System.currentTimeMillis();
 
-        // creating a new object of the class Date
-        java.sql.Date date = new java.sql.Date(millis);
-        System.out.println(date);
-    }
-    //Makes all screens invisible, then sets argued screen to visible
-    public void showScreen(JPanel screen){
+    // Makes all screens invisible, then sets argued screen to visible
+    public void showScreen(JPanel screen) {
         homeScreenPanel.setVisible(false);
         catalogPanel.setVisible(false);
         checkInPanel.setVisible(false);
         checkOutPanel.setVisible(false);
+        addBookPanel.setVisible(false);
+        deleteBookPanel.setVisible(false);
         screen.setVisible(true);
     }
-
-
 }
-
-
