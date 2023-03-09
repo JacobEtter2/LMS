@@ -1,0 +1,39 @@
+/*This class rewrites the JSON file with any changes that were made by the user. It is used
+  by calling its static method updateFile();
+ */
+
+import org.json.simple.JSONObject;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class FileUpdater {
+    //The file it is editing
+    private static final String FILENAME = "C:\\Users\\jacob\\OneDrive\\Desktop\\School Stuff\\Internship\\EVLOS\\LMS\\Books_Entries.json";
+
+    public static void updateFile() {
+        try (FileWriter file = new FileWriter(FILENAME)) {
+            JSONObject jsonBooks = new JSONObject();
+            for (int i = 0; i < Book.bookList.size(); i++) {
+                Book book = Book.bookList.get(i);
+                JSONObject jsonBook = new JSONObject();
+                jsonBook.put("subject", book.subject);
+                jsonBook.put("title", book.title);
+                jsonBook.put("authorName", book.author);
+                jsonBook.put("publisherName", book.publisher);
+                jsonBook.put("copyright", book.copyright);
+                jsonBook.put("numOfPages", book.pageCount);
+                jsonBook.put("isbn", book.isbn);
+                jsonBook.put("damagedStatus", book.damagedStatus);
+                jsonBook.put("checkInStatus", book.checkedInStatus);
+                jsonBook.put("studentName", book.studentName);
+                jsonBook.put("returnDate", book.returnDate);
+                jsonBooks.put("book" + (i+1), jsonBook);
+            }
+            file.write(jsonBooks.toJSONString());
+            file.flush();
+            System.out.println("Successfully updated Book_Entries.json!");
+        } catch (IOException e) {
+            System.out.println("An error occurred while updating books.json: " + e.getMessage());
+        }
+    }
+}
