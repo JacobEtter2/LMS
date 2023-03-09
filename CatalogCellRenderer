@@ -1,3 +1,7 @@
+/* This class is an extension of the DefaultTableCellRenderer class which is what shades the cells
+   under Checked In.
+ */
+
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.*;
