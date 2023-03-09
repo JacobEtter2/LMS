@@ -1,3 +1,8 @@
+/* This class is the screen where a user checks in a book. It allows them to
+   select the book to check in and update its damage status
+ */
+
+
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
@@ -11,34 +16,44 @@ public class CheckInPanel extends JPanel implements ActionListener {
     JLabel dropdownLabel = new JLabel("Book:");
     JComboBox bookDropdown = new JComboBox();
 
+    JLabel damageLabel = new JLabel("Damage:");
+    JComboBox damageDropdown = new JComboBox();
+
+    //Removes all items from dropdown
+    //Adds all books from Book.bookList if they are checked in to checkedInBooks list
+    //Sorts checkedInBooks list
+    //Adds each title from checkedInBooks to dropdown
     public void updateDropdown(){
         bookDropdown.removeAllItems();
-        ArrayList<Book> checkedInBooks = new ArrayList<>();
+        ArrayList<String> checkedInBooks = new ArrayList<>();
         for (Book book : Book.bookList){
             if (!book.checkedInStatus.equals("Checked In")) {
-                checkedInBooks.add(book);
+                checkedInBooks.add(book.title);
             }
-            Collections.sort(checkedInBooks, new Comparator<Book>() {
-                @Override
-                public int compare(Book o1, Book o2) {
-                    return o1.title.compareTo(o2.title);
-                }
-            });
+            Collections.sort(checkedInBooks);
 
         }
-        for(Book book:checkedInBooks){
-            bookDropdown.addItem(book.title);
+        for(String title:checkedInBooks){
+            bookDropdown.addItem(title);
         }
     }
 
+    //Searches Book.bookList for the book that matches selected item
+    //Changes book's status to checkedIn, the selected damage value, resets return date and name
+    //Shows message that book was checked in
+    //Update dropdown and JSON file
     public void checkInBook(Object item){
         for (Book book : Book.bookList){
             if (book.title.equals(item)){
                 book.checkedInStatus = "Checked In";
+                book.damagedStatus = (String) damageDropdown.getSelectedItem();
+                book.returnDate = "N/A";
+                book.studentName = "N/A";
                 JOptionPane.showMessageDialog(this,book.title + " has been checked in.");
             }
         }
-    updateDropdown();
+        updateDropdown();
+        FileUpdater.updateFile();
     }
 
     @Override
@@ -50,6 +65,7 @@ public class CheckInPanel extends JPanel implements ActionListener {
             checkInBook(bookDropdown.getSelectedItem());
         }
     }
+
     public void configureComponents(JPanel panel) {
         backButton.setBounds(24,24,96,72);
         backButton.addActionListener(this);
@@ -58,8 +74,16 @@ public class CheckInPanel extends JPanel implements ActionListener {
 
         bookDropdown.setBounds(140,108,448,24);
 
-        checkInButton.setBounds(240,156,108,72);
+        checkInButton.setBounds(240,200,108,72);
         checkInButton.addActionListener(this);
+
+        damageLabel.setBounds(78,148,108,24);
+
+        damageDropdown.setBounds(140,148,128,24);
+        damageDropdown.addItem("None");
+        damageDropdown.addItem("Slightly Damaged");
+        damageDropdown.addItem("Major Damage");
+        damageDropdown.addItem("Cannot be checked out");
 
 
 
@@ -67,6 +91,8 @@ public class CheckInPanel extends JPanel implements ActionListener {
         panel.add(dropdownLabel);
         panel.add(bookDropdown);
         panel.add(checkInButton);
+        panel.add(damageLabel);
+        panel.add(damageDropdown);
     }
     public CheckInPanel(Frame frame){
         this.setVisible(false);
