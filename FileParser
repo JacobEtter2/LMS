@@ -49,7 +49,7 @@ public class FileParser {
             parser = new JSONParser();
 
             // Read the JSON file
-            obj = parser.parse(new FileReader("C:\\Users\\jacob\\OneDrive\\Desktop\\School Stuff\\Internship\\EVLOS\\LMS\\Books_Entries.json"));
+            obj = parser.parse(new FileReader(FileSelector.FILE));
 
             // Convert the object to a JSONObject
             jsonObject = (JSONObject) obj;
