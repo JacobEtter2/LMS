@@ -16,6 +16,7 @@ public class Frame extends JFrame {
     AddBookPanel addBookPanel;
     DeleteBookPanel deleteBookPanel;
     HomeScreenPanel homeScreenPanel;
+    FileSelector fileSelector;
 
     public Frame() {
         // Set initial JFrame properties
@@ -25,6 +26,7 @@ public class Frame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         // Initialize objects
+        this.fileSelector = new FileSelector(this);
         this.parser = new FileParser();
         this.catalogPanel = new CatalogPanel(this);
         this.catalogConfigurer = new CatalogConfigurer(this);
