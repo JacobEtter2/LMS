@@ -1,0 +1,13 @@
+import javax.swing.*;
+import javax.swing.filechooser.*;
+public class FileSelector {
+    Frame frame;
+    public static String FILE = null;
+    public FileSelector(Frame frame){
+        this.frame = frame;
+        JFileChooser fc = new JFileChooser();
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fc.showOpenDialog(frame);
+        FILE = fc.getSelectedFile().getAbsolutePath();
+    }
+}
